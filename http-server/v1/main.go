@@ -61,6 +61,14 @@ func (store *JSONMemoryStore) RecordWin(name string) {
 	saveJSONScores(dataMap)
 }
 
+func (store *JSONMemoryStore) GetLeague() []Player {
+	league := []Player{}
+	for name, wins := range getJSONScores().Scores {
+		league = append(league, Player{name, wins})
+	}
+	return league
+}
+
 func getJSONScores() *JSONMemoryStore {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -91,7 +99,7 @@ func saveJSONScores(scores *JSONMemoryStore) {
 
 func main() {
 
-	server := &PlayerServer{&JSONMemoryStore{}}
+	server := NewPlayerServer(&JSONMemoryStore{})
 	// server := &PlayerServer{NewInMemoryPlayerStore()}
 
 	if err := http.ListenAndServe(":5000", server); err != nil {
